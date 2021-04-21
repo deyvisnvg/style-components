@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- `` - livereload(Refrescar la pagina) Ctrl +Ship + p -->
+    <div id="container"></div>
+    <script>
+        function component(strings, ...dynamicValues) {
+            return function(props) {
+                let newContent = strings.slice();
+                dynamicValues.forEach((value, index) => {
+                    newContent[index] += props[value];
+                })
+                return newContent.join('');
+            }
+        }
+
+        // const styled = {
+        //     h1: function(styles) {
+        //             return function(component) {
+        //                 return `
+        //                     <h1 style = "${styles}">
+        //                         ${component}
+        //                     </h1>
+        //                 `;
+        //             }
+                
+        //         },
+        //     h2: '',
+        //     div: ''
+        // }
+        function pintarTag(styles, tag, component) {
+            if(tag == 'img') 
+                return `<${tag} style = "${styles}" src="${component}" />`;
+            
+            return `
+                <${tag} style = "${styles}">
+                    ${component}
+                </${tag}>
+            `;
+        }
+
+        function generarContentStyled(tags) {
+            let styled = {};
+
+            tags.forEach((tag) => {
+                styled[tag] = (styles) => {
+                    return (component) => pintarTag(styles, tag, component);
+                }
+            })
+            return styled;
+        }
+
+        const tags = ['h1', 'h2', 'div', 'img', 'p'];
+
+        const styled = generarContentStyled(tags);
+        //console.log(styled);
+
+        const CursoStyled = styled.h1`
+            font-family: system-ui;
+            color: #4caf50;
+            font-size: 50px;
+            text-shadow: 2px 2px 0 black;
+            font-weight: bold;
+            text-align: center;
+            border-top: 2px solid blue;
+            border-radius: 30px;
+            margin: 0 100px;
+        `
+
+        const TextStyled = styled.h2`
+            font-family: system-ui;
+            color: #009688;
+            font-size: 30px;
+            text-shadow: 1px 1px 0 blue;
+            font-weight: bold;
+            text-align: center;
+        `
+
+        const ImageStyled = styled.img`
+            border: 1px solid #e91e63;
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 10px;
+        `
+
+        const TitleStyled = styled.p`
+            font-family: system-ui;
+            color: orange;
+            font-size: 50px;
+            text-shadow: 2px 2px 0 black;
+            font-weight: bold;
+            background: #ee3876;
+            border-bottom: 2px solid blue;
+            border-radius: 0 0 30px 30px;
+            margin: 15px 100px 0;
+
+        `
+
+        const props = {
+            curso: 'JavaScript Avanzado',
+            message: 'No te rindas',
+            text: 'Con Nuestro Amigo',
+            image: './leonidas.jpg'
+        };
+
+        const title = component`<marquee> ${'message'} </marquee>`(props);
+        const curso = component`${'curso'}`(props);
+        const text = component`${'text'}`(props);
+        const image = component`${'image'}`(props);
+
+        function render(component, container) {
+            container.innerHTML += component;
+        }
+
+        // render(user, window.container);
+        render(CursoStyled(curso), window.container);
+        render(TextStyled(text), window.container);
+        render(ImageStyled(image), window.container);
+        render(TitleStyled(title), window.container);
+    </script>
+</body>
+</html>
